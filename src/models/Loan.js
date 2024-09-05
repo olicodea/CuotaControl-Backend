@@ -4,7 +4,7 @@ const LoanSchema = new mongoose.Schema({
     // true para préstamos hechos, false para préstamos recibidos
     tipo: { type: Boolean, required: true },
     monto: { type: Number, required: true },
-    tasaInteres: { type: Number, required: true },
+    tasaInteres: { type: Number },
     fechaInicio: { type: Date, required: true },
     notas: { type: String },
     cuotas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Installment' }],
