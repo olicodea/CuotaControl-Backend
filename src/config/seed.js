@@ -9,7 +9,7 @@ dotenv.config();
 
 const URI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}`;
 
-mongoose.connect(URI, {})
+mongoose.connect(URI)
     .then(() => {
         console.log('Conectado a MongoDB');
     })
@@ -31,37 +31,77 @@ const seedData = async () => {
             usuarioId: usuario._id
         });
 
-        const prestamo = await Loan.create({
-            tipo: true,
-            monto: 3000,
+        const prestamoPrestado = await Loan.create({
+            tipoPrestamo: 1,
+            montoTotal: 3000,
             fechaInicio: new Date(),
             contactoId: contacto._id,
-            usuarioId: usuario._id
+            usuarioId: usuario._id,
+            nroPrestamo: 1,
         });
 
-        const cuotas = await Installment.insertMany([
+        const prestamoRecibido = await Loan.create({
+            tipoPrestamo: 2,
+            montoTotal: 4000,
+            fechaInicio: new Date(),
+            contactoId: contacto._id,
+            usuarioId: usuario._id,
+            nroPrestamo: 1,
+        });
+
+        const cuotasPrestamoPrestado = await Installment.insertMany([
             {
-                loanId: prestamo._id,
-                monto: 1000,
+                loanId: prestamoPrestado._id,
+                montoCuota: 1000,
                 fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-                estado: 'pendiente'
+                estadoCuota: 1,
             },
             {
-                loanId: prestamo._id,
-                monto: 1000,
+                loanId: prestamoPrestado._id,
+                montoCuota: 1000,
                 fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 2)),
-                estado: 'pendiente'
+                estadoCuota: 1,
             },
             {
-                loanId: prestamo._id,
-                monto: 1000,
+                loanId: prestamoPrestado._id,
+                montoCuota: 1000,
                 fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-                estado: 'pendiente'
+                estadoCuota: 1
             }
         ]);
 
-        prestamo.cuotas = cuotas.map(cuota => cuota._id);
-        await prestamo.save();
+        const cuotasPrestamoRecibido = await Installment.insertMany([
+            {
+                loanId: prestamoRecibido._id,
+                montoCuota: 1000,
+                fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+                estadoCuota: 1,
+            },
+            {
+                loanId: prestamoRecibido._id,
+                montoCuota: 1000,
+                fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 2)),
+                estadoCuota: 1,
+            },
+            {
+                loanId: prestamoRecibido._id,
+                montoCuota: 1000,
+                fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+                estadoCuota: 1
+            },
+            {
+                loanId: prestamoRecibido._id,
+                montoCuota: 1000,
+                fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+                estadoCuota: 1
+            }
+        ]);
+
+        prestamoPrestado.cuotas = cuotasPrestamoPrestado.map(cuota => cuota._id);
+        prestamoRecibido.cuotas = cuotasPrestamoRecibido.map(cuota => cuota._id);
+
+        await prestamoPrestado.save();
+        await prestamoRecibido.save();
 
         console.log('Datos de prueba insertados correctamente');
     } catch (error) {
