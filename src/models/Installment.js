@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { InstallmentStatuses } from '../enums/InstallmentStatuses';
 
 const InstallmentSchema = new mongoose.Schema({
     loanId: { type: mongoose.Schema.Types.ObjectId, ref: 'Loan', required: true },
