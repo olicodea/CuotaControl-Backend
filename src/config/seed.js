@@ -19,17 +19,23 @@ mongoose.connect(URI)
 
 const seedData = async () => {
     try {
-        const usuario = await User.create({
-            nombre: 'Juan Aquino',
-            email: 'juan@ejemplo.com',
-            password: 'password'
-        });
+        let usuario = await User.findOne({ email: 'juan@ejemplo.com' });
+        if (!usuario) {
+            usuario = await User.create({
+                nombre: 'Juan Aquino',
+                email: 'juan@ejemplo.com',
+                password: 'password'
+            });
+        }
 
-        const contacto = await Contact.create({
-            nombre: 'Gian Fernandez',
-            telefono: '123456789',
-            usuarioId: usuario._id
-        });
+        let contacto = await Contact.findOne({ nombre: 'Gian Fernandez', telefono: '123456789' });
+        if (!contacto) {
+            contacto = await Contact.create({
+                nombre: 'Gian Fernandez',
+                telefono: '123456789',
+                usuarioId: usuario._id
+            });
+        }
 
         const prestamoPrestado = await Loan.create({
             tipoPrestamo: 1,
@@ -46,7 +52,7 @@ const seedData = async () => {
             fechaInicio: new Date(),
             contactoId: contacto._id,
             usuarioId: usuario._id,
-            nroPrestamo: 1,
+            nroPrestamo: 2,
         });
 
         const cuotasPrestamoPrestado = await Installment.insertMany([
@@ -88,20 +94,15 @@ const seedData = async () => {
                 montoCuota: 1000,
                 fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 3)),
                 estadoCuota: 1
-            },
-            {
-                loanId: prestamoRecibido._id,
-                montoCuota: 1000,
-                fechaVencimiento: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-                estadoCuota: 1
             }
         ]);
 
-        prestamoPrestado.cuotas = cuotasPrestamoPrestado.map(cuota => cuota._id);
-        prestamoRecibido.cuotas = cuotasPrestamoRecibido.map(cuota => cuota._id);
+        await Loan.findByIdAndUpdate(prestamoPrestado._id, { cuotas: cuotasPrestamoPrestado.map(cuota => cuota._id) });
+        await Loan.findByIdAndUpdate(prestamoRecibido._id, { cuotas: cuotasPrestamoRecibido.map(cuota => cuota._id) });
 
-        await prestamoPrestado.save();
-        await prestamoRecibido.save();
+        await User.findByIdAndUpdate(usuario._id, {
+            $push: { prestamos: { $each: [prestamoPrestado._id, prestamoRecibido._id] } }
+        });
 
         console.log('Datos de prueba insertados correctamente');
     } catch (error) {
