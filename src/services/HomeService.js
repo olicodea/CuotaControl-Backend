@@ -1,11 +1,13 @@
 import Loan from "../models/Loan.js";
 import { LoanTypesReverse } from "../enums/LoanTypes.js";
+import Installment from "../models/Installment.js";
 import { InstallmentStatusesReverse } from "../enums/InstallmentStatuses.js";
 
 export const findHomeData = async (userId) => {
 
     try {
         const loans = await Loan.find({ usuarioId: userId }).populate("cuotas");
+        console.log(userId);
 
         let totalDebt = 0;
         let totalInFavor = 0;
@@ -16,11 +18,9 @@ export const findHomeData = async (userId) => {
 
         loans.forEach((loan, indexLoan) => {
             const loanType = LoanTypesReverse[loan.tipoPrestamo];
-
             loan.cuotas.forEach((installment, indexInstallment) => {
                 const installmentStatus = InstallmentStatusesReverse[installment.estadoCuota];
                 const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-
                 if (loanType === "prestado") {
                     totalInFavor += loan.montoTotal;
                     if (installmentStatus === "pagada") {

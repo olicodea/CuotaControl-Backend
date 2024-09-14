@@ -6,7 +6,7 @@ const LoanSchema = new mongoose.Schema({
     tasaInteres: { type: Number },
     fechaInicio: { type: Date, required: true },
     notas: { type: String },
-    cuotas: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Installment' } ],
+    cuotas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Installment', required: true}],
     contactoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Contact', required: true },
     usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     nroPrestamo: { type: Number, required: true},
