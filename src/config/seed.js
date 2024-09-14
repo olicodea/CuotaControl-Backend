@@ -19,7 +19,6 @@ mongoose.connect(URI)
 
 const seedData = async () => {
     try {
-        // Busca al usuario por email o lo crea si no existe
         let usuario = await User.findOne({ email: 'juan@ejemplo.com' });
         if (!usuario) {
             usuario = await User.create({
@@ -29,7 +28,6 @@ const seedData = async () => {
             });
         }
 
-        // Crea el contacto si no existe
         let contacto = await Contact.findOne({ nombre: 'Gian Fernandez', telefono: '123456789' });
         if (!contacto) {
             contacto = await Contact.create({
@@ -39,7 +37,6 @@ const seedData = async () => {
             });
         }
 
-        // Crea los préstamos
         const prestamoPrestado = await Loan.create({
             tipoPrestamo: 1,
             montoTotal: 3000,
@@ -58,7 +55,6 @@ const seedData = async () => {
             nroPrestamo: 2,
         });
 
-        // Crea las cuotas de ambos préstamos
         const cuotasPrestamoPrestado = await Installment.insertMany([
             {
                 loanId: prestamoPrestado._id,
@@ -101,11 +97,9 @@ const seedData = async () => {
             }
         ]);
 
-        // Actualiza los préstamos con las cuotas
         await Loan.findByIdAndUpdate(prestamoPrestado._id, { cuotas: cuotasPrestamoPrestado.map(cuota => cuota._id) });
         await Loan.findByIdAndUpdate(prestamoRecibido._id, { cuotas: cuotasPrestamoRecibido.map(cuota => cuota._id) });
 
-        // Actualiza el usuario con los préstamos creados
         await User.findByIdAndUpdate(usuario._id, {
             $push: { prestamos: { $each: [prestamoPrestado._id, prestamoRecibido._id] } }
         });

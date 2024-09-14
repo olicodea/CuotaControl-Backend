@@ -7,7 +7,6 @@ export const findHomeData = async (userId) => {
 
     try {
         const loans = await Loan.find({ usuarioId: userId }).populate("cuotas");
-        console.log(userId);
 
         let totalDebt = 0;
         let totalInFavor = 0;
