@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDataBase from './config/db.js';
 
 import { homeRouter } from './routes/home.routes.js';
+import { prestamosRouter } from './routes/prestamos.routes.js';
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api', homeRouter);
+app.use('/api', prestamosRouter);
 
 // Port
 const PORT = process.env.PORT || 5000;
