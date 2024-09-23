@@ -3,7 +3,8 @@ import Contact from "../models/Contact.js";
 import User from "../models/User.js";
 import Installment from "../models/Installment.js";
 import { LoanTypes, LoanTypesReverse } from "../enums/LoanTypes.js";
-import { InstallmentStatusesReverse } from "../enums/InstallmentStatuses.js";
+import { InstallmentStatuses, InstallmentStatusesReverse } from "../enums/InstallmentStatuses.js";
+import moment from "moment";
 
 export const findLoansByUser = async (userId) => {
     try {
@@ -149,5 +150,58 @@ export const deleteLoanById = async (loanId) => {
     } catch (error) {
         console.error("Error al eliminar prestamo:", error);
         throw new Error("Error al eliminar prestamo.");
+    }
+};
+
+export const createLoan = async (loan) => {
+    try {
+        const contact = await Contact.findById(loan.contactoId);
+        const user = await User.findById(loan.usuarioId);
+        const INSTALLMENT_INITIAL_STATUS = "pendiente";
+
+        if (!contact || !user) throw new Error("Contacto o usuario no encontrado.");
+
+        const type = +LoanTypes[loan.tipoPrestamo];
+
+        let loansCount = (await Loan.countDocuments());
+
+        let newLoan = await Loan.create({
+            contactoId: contact._id,
+            usuarioId: user._id,
+            tipoPrestamo: type,
+            montoTotal: loan.monto,
+            nroPrestamo: loansCount + 1, 
+            fechaInicio: moment(loan.fechaInicio, "DD/MM/YYYY").toDate(),
+            notas: loan.notas,
+            cuotas: []
+        });
+
+        const installmentAmount = newLoan.montoTotal / loan.cantidadCuotas;
+
+        let installments = [];
+
+        for (let i = 0; i < loan.cantidadCuotas; i++) {
+            const installment = {
+                nroCuota: i + 1,
+                montoCuota: installmentAmount,
+                fechaVencimiento: new Date(
+                    newLoan.fechaInicio.setMonth(newLoan.fechaInicio.getMonth() + i)
+                ),
+                estadoCuota: +InstallmentStatuses[INSTALLMENT_INITIAL_STATUS],
+                loanId: newLoan._id,
+            };
+
+            installments.push(installment);
+        }
+
+        newLoan.cuotas = await Installment.insertMany(installments);
+
+        await Loan.findByIdAndUpdate(newLoan._id, { cuotas: newLoan.cuotas });
+
+        return newLoan;
+
+    } catch (error) {
+        console.error("Error al agregar préstamo:", error);
+        throw new Error("Error al agregar préstamo.");
     }
 };
