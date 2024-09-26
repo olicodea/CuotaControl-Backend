@@ -120,6 +120,10 @@ export const updateLoan = async (loan) => {
         const contact = await Contact.findById(loan.contactoId);
         const type = +LoanTypes[loan.tipo];
 
+        if (!contact) throw new Error("Contacto no encontrado.");
+
+        if(!type) throw new Error("Tipo de préstamo inválido.");
+
         const editProps = {
             contactoId: contact?._id,
             tipoPrestamo: type,

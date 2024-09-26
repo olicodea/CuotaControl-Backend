@@ -23,15 +23,18 @@ export const getLoanById = async (req, res) => {
 
 export const editLoan = async (req, res) => {
     const loan = req.body;
-    console.log(loan);
+
     if (!loan || !loan.id)
         return res
             .status(400)
             .json({ error: "Los datos del prestamo son requeridos." });
+    try {
+        const updatedLoan = await updateLoan(loan);
 
-    const updatedLoan = await updateLoan(loan);
-
-    res.status(200).json(updatedLoan);
+        res.status(200).json(updatedLoan);
+    } catch (error) {
+        res.status(500).send("Error al actualizar el prestamo.");
+    }
 };
 
 export const removeLoan = async (req, res) => {
