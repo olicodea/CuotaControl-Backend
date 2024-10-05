@@ -17,7 +17,7 @@ export const getLoanById = async (req, res) => {
         const loan = await findLoanById(loanId);
         res.status(200).json(loan);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).send({error: error.message});
     }
 };
 
@@ -33,7 +33,7 @@ export const editLoan = async (req, res) => {
 
         res.status(200).json(updatedLoan);
     } catch (error) {
-        res.status(500).send("Error al actualizar el prestamo.");
+        res.status(500).send({error: error.message});
     }
 };
 
@@ -51,6 +51,6 @@ export const removeLoan = async (req, res) => {
 
         res.status(200).send(true);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 };
