@@ -12,6 +12,6 @@ export const getContacts = async (req, res) => {
         const data = await findContactsByUserId(userId);
         res.status(200).json(data);
     } catch (error) {
-        res.status(500).json({ error: "Error al obtener los datos del Home" });
+        res.status(500).json({ error: error.message});
     }
 };
