@@ -6,6 +6,7 @@ const ContactSchema = new mongoose.Schema({
     email: { type: String },
     notas: { type: String },
     usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    activo: { type: Boolean, default: true },
 }, { timestamps: true });
 
 const Contact = mongoose.model('Contact', ContactSchema);
