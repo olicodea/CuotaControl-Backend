@@ -2,7 +2,10 @@ import Contact from "../models/Contact.js";
 
 export const findContactsByUserId = async (userId) => {
     try {
-        const contacts = await Contact.find({ usuarioId: userId, activo: true });
+        const contacts = await Contact.find({
+            usuarioId: userId,
+            activo: true,
+        });
         return contacts;
     } catch (error) {
         console.error("Error al obtener contactos:", error);
