@@ -27,7 +27,7 @@ export const addContact = async (req, res) => {
     if (!newContact.nombre)
         return res.status(400).json({ error: "El nombre es requerido." });
 
-    if (!newContact.usuarioId)
+    if (!newContact.userId)
         return res
             .status(400)
             .json({ error: "El ID de usuario es requerido." });
@@ -43,7 +43,7 @@ export const addContact = async (req, res) => {
 export const editContact = async (req, res) => {
     const contact = req.body;
 
-    if (!contact.contactoId || !contact.nombre)
+    if (!contact.contactId || !contact.nombre)
         return res.status(400).json({ error: "ID de contacto requerido." });
 
     try {
@@ -55,7 +55,7 @@ export const editContact = async (req, res) => {
 };
 
 export const removeContact = async (req, res) => {
-    const contactId = req.query.contactoId;
+    const contactId = req.query.contactId;
 
     if (!contactId)
         return res.status(400).json({ error: "ID de contacto requerido." });
