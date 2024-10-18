@@ -6,17 +6,13 @@ import {
 } from "../services/ContactsService.js";
 
 export const getContacts = async (req, res) => {
-  const userId = req.query.userId || req.headers["userId"];
+    const userId = req.query.userId || req.headers["userId"];
 
-  if (!userId)
-    return res.status(400).json({ error: "El ID de usuario es requerido." });
+    if (!userId)
+        return res
+            .status(400)
+            .json({ error: "El ID de usuario es requerido." });
 
-  try {
-    const data = await findContactsByUserId(userId);
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
     try {
         const data = await findContactsByUserId(userId);
         res.status(200).json(data);
@@ -26,18 +22,19 @@ export const getContacts = async (req, res) => {
 };
 
 export const addContact = async (req, res) => {
-    const { nombre, userId: usuarioId } = req.body;
+    console.log(req.body);
+    const { nombre, userId } = req.body;
 
     if (!nombre)
         return res.status(400).json({ error: "El nombre es requerido." });
 
-    if (!usuarioId)
+    if (!userId)
         return res
             .status(400)
             .json({ error: "El ID de usuario es requerido." });
 
     try {
-        const data = await createContact({ nombre, usuarioId });
+        const data = await createContact({ nombre: nombre, usuarioId: userId });
         res.status(201).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -70,5 +67,4 @@ export const removeContact = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
->>>>>>> fec7b944183f83602049b393b79aa5bdc9a7375f
 };
