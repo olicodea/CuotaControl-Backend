@@ -27,7 +27,7 @@ export const createContact = async (newContact) => {
 export const updateContact = async (contact) => {
     try {
         const updatedContact = await Contact.findByIdAndUpdate(
-            contact.contactoId,
+            contact.contactId,
             contact,
             { new: true }
         );

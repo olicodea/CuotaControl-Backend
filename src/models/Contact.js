@@ -4,7 +4,7 @@ const ContactSchema = new mongoose.Schema({
     nombre: { type: String, required: true },
     telefono: { type: String },
     email: { type: String },
-    notas: { type: String },
+    nota: { type: String },
     usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     activo: { type: Boolean, default: true },
 }, { timestamps: true });

@@ -23,7 +23,7 @@ export const getContacts = async (req, res) => {
 
 export const addContact = async (req, res) => {
     console.log(req.body);
-    const { nombre, userId } = req.body;
+    const { nombre, userId, email, telefono, nota } = req.body;
 
     if (!nombre)
         return res.status(400).json({ error: "El nombre es requerido." });
@@ -34,7 +34,13 @@ export const addContact = async (req, res) => {
             .json({ error: "El ID de usuario es requerido." });
 
     try {
-        const data = await createContact({ nombre: nombre, usuarioId: userId });
+        const data = await createContact({
+            nombre,
+            usuarioId: userId,
+            email,
+            telefono,
+            nota,
+        });
         res.status(201).json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
