@@ -10,7 +10,7 @@ export const register = async (req, res) => {
             password: password,
         });
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-        res.status(200).json({ user, token });
+        res.status(200).json({ name: name, email: email, token: token });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -21,7 +21,7 @@ export const login = async (req, res) => {
     try {
         const user = await signIn(email, password);
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-        res.status(200).json({ user, token });
+        res.status(200).json({ id: user._id, name: user.nombre, email: user.email, token: token });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
